@@ -151,7 +151,7 @@ module Rack
 
     def call(env)
 
-      client_settings = @config.stateless ? NullClientSettings : ClientSettings.new(env)
+      client_settings = @config.stateless ? NullClientSettings.new : ClientSettings.new(env)
 
       status = headers = body = nil
       query_string = env['QUERY_STRING']
