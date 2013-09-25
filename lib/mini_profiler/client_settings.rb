@@ -1,9 +1,6 @@
 module Rack
   class MiniProfiler
-    class ClientSettings
-
-      COOKIE_NAME = "__profilin"
-
+    class NullClientSettings
       BACKTRACE_DEFAULT = nil
       BACKTRACE_FULL    = 1
       BACKTRACE_NONE    = 2
@@ -11,6 +8,31 @@ module Rack
       attr_accessor :disable_profiling
       attr_accessor :backtrace_level
 
+      def disable_profiling?
+        @disable_profiling
+      end
+
+      def backtrace_full?
+        @backtrace_level == BACKTRACE_FULL
+      end
+
+      def backtrace_default?
+        @backtrace_level == BACKTRACE_DEFAULT
+      end
+
+      def backtrace_none?
+        @backtrace_level == BACKTRACE_NONE
+      end
+
+      def write!(*);end
+      def discard_cookie!(*);end
+      def has_cookie?; false; end
+
+    end
+
+    class ClientSettings < NullClientSettings
+
+      COOKIE_NAME = "__profilin"
 
       def initialize(env)
         request = ::Rack::Request.new(env)
@@ -45,21 +67,7 @@ module Rack
         !@cookie.nil?
       end
 
-      def disable_profiling?
-        @disable_profiling
-      end
-
-      def backtrace_full?
-        @backtrace_level == BACKTRACE_FULL
-      end
-
-      def backtrace_default?
-        @backtrace_level == BACKTRACE_DEFAULT
-      end
-
-      def backtrace_none?
-        @backtrace_level == BACKTRACE_NONE
-      end
     end
+
   end
 end
