@@ -15,13 +15,17 @@ module Rack
     attr_accessor :auto_inject, :base_url_path, :pre_authorize_cb, :position,
         :backtrace_remove, :backtrace_includes, :backtrace_ignores, :skip_schema_queries,
         :storage, :user_provider, :storage_instance, :storage_options, :skip_paths, :authorization_mode,
-        :toggle_shortcut, :start_hidden, :backtrace_threshold_ms, :storage_failure, :logger, :stateless
+        :toggle_shortcut, :start_hidden, :backtrace_threshold_ms, :storage_failure, :logger,
+        :insert_after_middlewares
 
     # Deprecated options
     attr_accessor :use_existing_jquery
 
+    attr_accessor :stateless
+
       def self.default
         new.instance_eval {
+          @stateless = false
           @auto_inject = true # automatically inject on every html page
           @base_url_path = "/mini-profiler-resources/"
 
@@ -37,7 +41,7 @@ module Rack
           @toggle_shortcut = 'Alt+P'
           @start_hidden = false
           @backtrace_threshold_ms = 0
-          @stateless = false
+          @insert_after_middlewares = %w{HerokuDeflater::SkipBinary Rack::Deflater}
           @storage_failure = Proc.new do |exception|
             if @logger
               @logger.warn("MiniProfiler storage failure: #{exception.message}")
